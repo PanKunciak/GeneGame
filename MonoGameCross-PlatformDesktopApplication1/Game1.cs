@@ -1,71 +1,66 @@
-﻿using System.Collections;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGameCross_PlatformDesktopApplication1.Content.Classes.Card;
-using MonoGameCross_PlatformDesktopApplication1.Content.Classes.Shapes;
 
-
-namespace MonoGameCross_PlatformDesktopApplication1;
-
-public class Game1 : Game
+namespace MonoGameCross_PlatformDesktopApplication1
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
-    private Card _card;
-    private ArrayList cardArr = new ArrayList();
-    private CustomRectangle _customRectangle;
-    public Game1()
+    public class Game1 : Game
     {
-        _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
-        IsMouseVisible = true;
-    }
+        private GraphicsDeviceManager _graphics;
+        private SpriteBatch _spriteBatch;
+        private List<Card> cardArr = new List<Card>();
 
-    protected override void Initialize()
-    {
-        // TODO: Add your initialization logic here
-
-        base.Initialize();
-    }
-
-    protected override void LoadContent()
-    {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-        for (int i = 0; i < 5; i++)
+        public Game1()
         {
-            _customRectangle = new CustomRectangle(200 + (i * 10), 150, 100, 100, (5 * i) - 10);
-            _card = new Card(GraphicsDevice, _customRectangle, //new Vector2(200 + (i * 10), 150), 100, 150,
-                new Color(5 * i, 10 * i, 15 * i, 255)); // XNA Color
-            cardArr.Add(_card);
+            _graphics = new GraphicsDeviceManager(this);
+            Content.RootDirectory = "Content";
+            IsMouseVisible = true;
         }
-        // TODO: use this.Content to load your game content here
-    }
 
-    protected override void Update(GameTime gameTime)
-    {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            Exit();
-
-        // TODO: Add your update logic here
-
-        base.Update(gameTime);
-    }
-
-    protected override void Draw(GameTime gameTime)
-    {
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-        _spriteBatch.Begin();
-        foreach (Card card in cardArr)
+        protected override void LoadContent()
         {
-            card.Draw(_spriteBatch); 
+            _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            for (int i = 0; i < 5; i++)
+            {
+                var card = new Card(
+                    GraphicsDevice,
+                    new Vector2(200 + (i * 40), 250),   // pozycja
+                    100,                                // szerokość
+                    150,                                // wysokość
+                    MathHelper.ToRadians((i - 2) * 10), // rotacja: -20, -10, 0, 10, 20
+                    new Color(50 * i, 30 * i, 100, 255) // kolor
+                );
+
+                cardArr.Add(card);
+            }
         }
-        //_card.Draw(_spriteBatch);
-        _spriteBatch.End();
 
-        // TODO: Add your drawing code here
+        protected override void Update(GameTime gameTime)
+        {
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
+                Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Exit();
 
-        base.Draw(gameTime);
+            base.Update(gameTime);
+        }
+
+        protected override void Draw(GameTime gameTime)
+        {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            _spriteBatch.Begin();
+
+            foreach (var card in cardArr)
+            {
+                card.Draw(_spriteBatch);
+            }
+
+            _spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
     }
 }
